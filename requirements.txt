@@ -1,0 +1,11 @@
+#This requirements file is inspired by the one in Lab 1 from https://github.com/featurestorebook/mlfs-book:
+xgboost==2.0.3
+matplotlib
+#hopsworks[python,great-expectations]  #Replaced with the two below
+hopsworks==3.4.4
+great-expectations==0.14.13
+openmeteo-requests
+retry-requests==2.0.0
+requests-cache==1.2.0
+#requests #
+scikit-learn
