@@ -2,10 +2,12 @@
 xgboost==2.0.3
 matplotlib
 #hopsworks[python,great-expectations]  #Replaced with the two below
-hopsworks==3.4.4
-great-expectations==0.14.13
+#hopsworks==3.4.4
+#great-expectations==0.14.13
+hopsworks[python,great-expectations]==4.6.0
 openmeteo-requests
 retry-requests==2.0.0
 requests-cache==1.2.0
 #requests #
-scikit-learn
+scikit-learn==1.4.0
+python-dotenv
