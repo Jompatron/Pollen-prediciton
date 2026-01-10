@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Pollen Forecasts</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; }
+    img { width: 100%; height: auto; border-radius: 10px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; font-size: 0.9rem; }
+    th { background: #f6f6f6; }
+    .muted { color: #666; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Pollen Forecasts (Stockholm)</h1>
+  <p class="muted">Updated automatically after daily ingestion + inference.</p>
+
+  <h2>Forecast plots</h2>
+  <div class="grid">
+    <div class="card"><h3>Alder</h3><img src="images/alder_pollen_forecast.png" alt="Alder forecast"></div>
+    <div class="card"><h3>Birch</h3><img src="images/birch_pollen_forecast.png" alt="Birch forecast"></div>
+    <div class="card"><h3>Grass</h3><img src="images/grass_pollen_forecast.png" alt="Grass forecast"></div>
+    <div class="card"><h3>Mugwort</h3><img src="images/mugwort_pollen_forecast.png" alt="Mugwort forecast"></div>
+    <div class="card"><h3>Olive</h3><img src="images/olive_pollen_forecast.png" alt="Olive forecast"></div>
+    <div class="card"><h3>Ragweed</h3><img src="images/ragweed_pollen_forecast.png" alt="Ragweed forecast"></div>
+  </div>
+
+  <h2>Latest predictions (CSV)</h2>
+  <p><a href="latest_predictions.csv">Download latest_predictions.csv</a></p>
+  <div id="table"></div>
+
+  <script>
+    async function loadCSV() {
+      const res = await fetch("latest_predictions.csv", { cache: "no-store" });
+      if (!res.ok) return;
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split(","));
+      const header = rows.shift();
+      const table = document.createElement("table");
+
+      const thead = document.createElement("thead");
+      const trh = document.createElement("tr");
+      header.forEach(h => { const th = document.createElement("th"); th.textContent = h; trh.appendChild(th); });
+      thead.appendChild(trh);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      rows.slice(0, 14).forEach(r => {
+        const tr = document.createElement("tr");
+        r.forEach(c => { const td = document.createElement("td"); td.textContent = c; tr.appendChild(td); });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+
+      document.getElementById("table").appendChild(table);
+    }
+    loadCSV();
+  </script>
+</body>
+</html>

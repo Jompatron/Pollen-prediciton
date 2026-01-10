@@ -1,14 +1,17 @@
-name: Daily ingest (weather + pollen)
+name: Daily ingest + inference + publish (GitHub Pages)
 
 on:
   schedule:
     - cron: "0 8 * * *"   # ~09:00 CET
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
-  ingest:
+  pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -33,3 +36,36 @@ jobs:
           TZ: Europe/Stockholm
         run: |
           python notebooks/daily_ingest.py
+
+      - name: Run inference
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+          HOPSWORKS_HOST: c.app.hopsworks.ai
+          HOPSWORKS_PROJECT: AirQualityKTHLab1
+          TZ: Europe/Stockholm
+        run: |
+          python notebooks/inference.py
+
+      - name: Prepare docs for GitHub Pages
+        run: |
+          mkdir -p docs/images
+          # CSV created by inference.py
+          if [ -f .dist/latest_predictions.csv ]; then
+            cp .dist/latest_predictions.csv docs/latest_predictions.csv
+          fi
+
+          # Copy forecast images into stable filenames
+          cp pollen_model_alder_pollen/images/forecast.png   docs/images/alder_pollen_forecast.png
+          cp pollen_model_birch_pollen/images/forecast.png   docs/images/birch_pollen_forecast.png
+          cp pollen_model_grass_pollen/images/forecast.png   docs/images/grass_pollen_forecast.png
+          cp pollen_model_mugwort_pollen/images/forecast.png docs/images/mugwort_pollen_forecast.png
+          cp pollen_model_olive_pollen/images/forecast.png   docs/images/olive_pollen_forecast.png
+          cp pollen_model_ragweed_pollen/images/forecast.png docs/images/ragweed_pollen_forecast.png
+
+      - name: Commit and push updated docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/latest_predictions.csv docs/images/*.png
+          git commit -m "Update forecasts" || echo "No changes to commit"
+          git push

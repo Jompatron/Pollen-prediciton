@@ -1,14 +1,19 @@
-#This requirements file is inspired by the one in Lab 1 from https://github.com/featurestorebook/mlfs-book:
+# Core numeric stack (compatible with hopsworks 4.2.2)
+numpy==1.26.4
+pandas==2.1.4
+
+# ML
+scikit-learn==1.4.0
 xgboost==2.0.3
-matplotlib
-#hopsworks[python,great-expectations]  #Replaced with the two below
-#hopsworks==3.4.4
-#great-expectations==0.14.13
-#hopsworks[python,great-expectations]==4.6.0
+
+# Plotting
+matplotlib==3.9.2
+
+# Infra / feature store
 hopsworks[python,great-expectations]==4.2.2
+python-dotenv
+
+# Ingestion helpers
 openmeteo-requests
 retry-requests==2.0.0
 requests-cache==1.2.0
-#requests #
-scikit-learn==1.4.0
-python-dotenv
