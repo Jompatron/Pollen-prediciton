@@ -319,12 +319,15 @@ def main():
         f"'{PRED_FG_NAME}' v{PRED_FG_VERSION} (rows: {len(preds_wide)})"
     )
 
-    # Local artifact for GitHub Pages
     dist_dir = ROOT_DIR / ".dist"
     dist_dir.mkdir(parents=True, exist_ok=True)
+
+    # Remove internal-only columns before publishing
+    publish_df = preds_wide.drop(columns=["model_versions"], errors="ignore")
+
+    # Save clean CSV for GitHub Pages
     out_csv = dist_dir / "latest_predictions.csv"
-    preds_wide.to_csv(out_csv, index=False)
-    print(f"Saved latest predictions CSV -> {out_csv}")
+    publish_df.to_csv(out_csv, index=False)
 
 if __name__ == "__main__":
     main()
